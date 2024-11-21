@@ -1,27 +1,68 @@
 .container {
-    text-align: center;
-    margin-top: 20%;
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
 .input {
-    width: 80%;
-    max-width: 300px;
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
-.button {
-    padding: 10px 20px;
-    background-color: #28a745;
+.input:focus {
+    outline: none;
+    border-color: #fd856c;
+}
+
+.createAccountBtn {
+    width: 100%;
+    padding: 14px;
+    background-color: #ff7043;
     color: white;
     border: none;
+    border-radius: 999px;
+    font-size: 1rem;
     cursor: pointer;
-    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.2s;
+}
+
+.createAccountBtn:hover {
+    background-color: #f16a3f;
+}
+
+.signinText {
+    text-align: center;
+    color: #666;
+}
+
+.signinLink {
+    color: #1a1a1a;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.signinLink:hover {
+    color: #ff7043;
 }

@@ -7,7 +7,7 @@ const Landing = () => {
 
   return (
     <div className={styles.container}>
-      <h1>This is a placeholder</h1>
+      <h1>Welcome to Next Academy</h1>
       <button className={styles.button} onClick={() => navigate("/login")}>
         Login
       </button>

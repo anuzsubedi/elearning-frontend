@@ -1,35 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
     <div className={styles.container}>
-      <h1>Login</h1>
+      <h1>Sign in to NextAcademy</h1>
       <form className={styles.form}>
-        <input type="email" placeholder="Email" className={styles.input} />
-        <div className={styles.passwordContainer}>
+        <div className={styles.formGroup}>
+          <label htmlFor="email">Email</label>
+          <input type="text" id="email" className={styles.input} required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="password">Password</label>
           <input
-            type={passwordVisible ? "text" : "password"}
-            placeholder="Password"
+            type="password"
+            id="password"
             className={styles.input}
-          />
-          <FontAwesomeIcon
-            icon={passwordVisible ? faEyeSlash : faEye}
-            className={styles.icon}
-            onClick={() => setPasswordVisible(!passwordVisible)}
+            required
           />
         </div>
-        <button className={styles.button}>Login</button>
+        <button type="submit" className={styles.signInBtn}>
+          Sign In
+        </button>
       </form>
-      <p>
+      <p className={styles.signupText}>
         Don’t have an account?{" "}
-        <span onClick={() => navigate("/signup")} className={styles.link}>
+        <span onClick={() => navigate("/signup")} className={styles.signupLink}>
           Sign up
         </span>
       </p>
