@@ -1,27 +1,72 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import Dialog from "../../components/Dialog";
+import { signup } from "../../services/signupService";
 import styles from "./Signup.module.css";
 
 const Signup = () => {
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+  });
+  const [dialog, setDialog] = useState(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    const result = await signup(formData);
+
+    // Show dialog based on the result
+    setDialog({
+      message: result.message,
+      type: result.success ? "success" : "error",
+    });
+  };
+
+  const closeDialog = () => {
+    setDialog(null);
+  };
 
   return (
     <div className={styles.container}>
       <h1>Sign up to NextAcademy</h1>
-      <form className={styles.form}>
+      <form onSubmit={handleSignup} className={styles.form}>
         <div className={styles.formGroup}>
-          <label htmlFor="name">Full Name</label>
-          <input type="text" id="name" className={styles.input} required />
+          <label htmlFor="full_name">Full Name</label>
+          <input
+            type="text"
+            id="full_name"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleInputChange}
+            className={styles.input}
+            required
+          />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" className={styles.input} required />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className={styles.input}
+            required
+          />
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
             className={styles.input}
             required
           />
@@ -30,12 +75,13 @@ const Signup = () => {
           Create Account
         </button>
       </form>
-      <p className={styles.signinText}>
-        Already have an account?{" "}
-        <span onClick={() => navigate("/login")} className={styles.signinLink}>
-          Sign In
-        </span>
-      </p>
+      {dialog && (
+        <Dialog
+          message={dialog.message}
+          type={dialog.type}
+          onClose={closeDialog}
+        />
+      )}
     </div>
   );
 };
