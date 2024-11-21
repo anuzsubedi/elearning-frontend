@@ -66,3 +66,15 @@ label {
 .signinLink:hover {
     color: #ff7043;
 }
+
+.error {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.info {
+    color: #007bff;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
