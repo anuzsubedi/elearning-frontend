@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/Dialog";
 import { signup, checkEmail } from "../../services/signupService";
 import styles from "./Signup.module.css";
@@ -12,6 +13,8 @@ const Signup = () => {
   const [emailError, setEmailError] = useState("");
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [dialog, setDialog] = useState(null);
+  const [redirectToLogin, setRedirectToLogin] = useState(false); // Track redirect condition
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -55,20 +58,23 @@ const Signup = () => {
       message: result.message,
       type: result.success ? "success" : "error",
     });
+
+    if (result.success) {
+      setRedirectToLogin(true);
+    }
   };
 
   const closeDialog = () => {
     setDialog(null);
+    if (redirectToLogin) {
+      navigate("/login");
+    }
   };
 
   return (
     <div className={styles.container}>
       <h1>Sign up to NextAcademy</h1>
-      <form
-        onSubmit={handleSignup}
-        className={styles.form}
-        autoComplete="off" // Disable form-level autocomplete
-      >
+      <form onSubmit={handleSignup} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="full_name">Full Name</label>
           <input
@@ -79,7 +85,6 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
-            autoComplete="off" // Disable autocomplete for this field
           />
         </div>
         <div className={styles.formGroup}>
@@ -92,7 +97,6 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
-            autoComplete="off" // Disable autocomplete for this field
           />
           {isCheckingEmail && <p className={styles.info}>Checking email...</p>}
           {emailError && <p className={styles.error}>{emailError}</p>}
@@ -107,7 +111,6 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
-            autoComplete="new-password" //
           />
         </div>
         <button
