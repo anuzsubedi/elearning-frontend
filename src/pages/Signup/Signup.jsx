@@ -121,6 +121,12 @@ const Signup = () => {
           Create Account
         </button>
       </form>
+      <p className={styles.signinText}>
+        Already have an account?{" "}
+        <span className={styles.signinLink} onClick={() => navigate("/login")}>
+          Login
+        </span>
+      </p>
       {dialog && (
         <Dialog
           message={dialog.message}
