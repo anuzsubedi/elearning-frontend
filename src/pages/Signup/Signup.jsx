@@ -64,7 +64,11 @@ const Signup = () => {
   return (
     <div className={styles.container}>
       <h1>Sign up to NextAcademy</h1>
-      <form onSubmit={handleSignup} className={styles.form}>
+      <form
+        onSubmit={handleSignup}
+        className={styles.form}
+        autoComplete="off" // Disable form-level autocomplete
+      >
         <div className={styles.formGroup}>
           <label htmlFor="full_name">Full Name</label>
           <input
@@ -75,6 +79,7 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
+            autoComplete="off" // Disable autocomplete for this field
           />
         </div>
         <div className={styles.formGroup}>
@@ -87,6 +92,7 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
+            autoComplete="off" // Disable autocomplete for this field
           />
           {isCheckingEmail && <p className={styles.info}>Checking email...</p>}
           {emailError && <p className={styles.error}>{emailError}</p>}
@@ -101,6 +107,7 @@ const Signup = () => {
             onChange={handleInputChange}
             className={styles.input}
             required
+            autoComplete="new-password" //
           />
         </div>
         <button
