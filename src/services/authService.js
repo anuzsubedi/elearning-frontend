@@ -1,26 +1,35 @@
-import axios from "../api/axiosInstance";
+import axiosInstance from "./axiosInstance";
 
-/**
- * Handles user login API calls
- * @param {Object} credentials - The email and password
- * @returns {Promise} - The API response
- */
-export const login = async (credentials) => {
+// Signup function
+export const signup = async (data) => {
     try {
-        const response = await axios.post("/auth/login", credentials);
-
-        // Extract user data and token from the response
-        const { user, token } = response.data;
-
-        return { success: true, user, message: response.data.message, token };
+        const response = await axiosInstance.post("/auth/signup", {
+            ...data,
+            user_type: "Student", // Add user_type by default
+        });
+        return { success: true, message: response.data.message };
     } catch (error) {
-        if (!error.response) {
-            return { success: false, message: "Network error. Please check your connection." };
-        }
-        if (error.response.status === 401) {
-            return { success: false, message: "Invalid email or password." };
-        }
-        return { success: false, message: "An unexpected error occurred. Please try again." };
+        console.error("Signup error:", error.response?.data || error.message); // Log the error for debugging
+        return {
+            success: false,
+            message: error.response?.data?.message || "Signup failed.",
+        };
     }
 };
 
+// Login function
+export const login = async (credentials) => {
+    try {
+        const response = await axiosInstance.post("/auth/login", credentials);
+        return {
+            success: true,
+            user: response.data.user, // Assuming API sends user details in `response.data.user`
+        };
+    } catch (error) {
+        console.error("Login error:", error.response?.data || error.message); // Log the error for debugging
+        return {
+            success: false,
+            message: error.response?.data?.message || "Login failed.",
+        };
+    }
+};
