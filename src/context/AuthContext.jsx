@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Holds the logged-in user's data
 
   const loginUser = (userData) => {
-    setUser(userData); // Set user data on login
+    setUser(userData); // Set user data after login
   };
 
   const logoutUser = () => {

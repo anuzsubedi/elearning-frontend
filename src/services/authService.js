@@ -8,7 +8,11 @@ import axios from "../api/axiosInstance";
 export const login = async (credentials) => {
     try {
         const response = await axios.post("/auth/login", credentials);
-        return { success: true, data: response.data.data, message: response.data.message };
+
+        // Extract user data and token from the response
+        const { user, token } = response.data;
+
+        return { success: true, user, message: response.data.message, token };
     } catch (error) {
         if (!error.response) {
             return { success: false, message: "Network error. Please check your connection." };
@@ -19,3 +23,4 @@ export const login = async (credentials) => {
         return { success: false, message: "An unexpected error occurred. Please try again." };
     }
 };
+

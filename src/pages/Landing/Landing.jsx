@@ -19,15 +19,18 @@ const Landing = () => {
     navigate("/"); // Stay on the landing page after logout
   };
 
+  // Debug user state
+  console.log("Current User:", user);
+
   return (
     <div className={styles.container}>
       <h1>Welcome, {user ? user.full_name : "Guest"}!</h1>
       {user ? (
-        <button onClick={handleLogout} className={styles.logoutBtn}>
+        <button onClick={handleLogout} className={styles.button}>
           Logout
         </button>
       ) : (
-        <a href="/login" className={styles.loginBtn}>
+        <a href="/login" className={styles.button}>
           Login
         </a>
       )}

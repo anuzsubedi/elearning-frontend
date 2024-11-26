@@ -21,8 +21,8 @@ const Login = () => {
     const result = await login(credentials);
 
     if (result.success) {
-      loginUser(result.data); // Set the user context
-      navigate("/"); // Redirect to landing page
+      loginUser(result.user);
+      navigate("/");
     } else {
       setDialog({ message: result.message, type: "error" });
     }
