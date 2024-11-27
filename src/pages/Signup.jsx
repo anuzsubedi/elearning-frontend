@@ -22,7 +22,7 @@ const Signup = () => {
     full_name: "",
     email: "",
     password: "",
-    user_type: "Student", // Default user type
+    user_type: "",
   });
   const [emailError, setEmailError] = useState(null);
   const [generalError, setGeneralError] = useState(null);
