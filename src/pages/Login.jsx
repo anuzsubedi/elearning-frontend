@@ -31,7 +31,7 @@ const Login = () => {
         try {
             const result = await login(credentials);
             if (result.success) {
-                loginUser(result.user);
+                loginUser(result.user); // Save user to context
                 navigate(result.user.user_type === "Instructor" ? "/teacher-home" : "/");
             } else {
                 setError(result.message);
