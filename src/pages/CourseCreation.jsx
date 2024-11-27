@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { createCourse } from "../services/courseServices";
-import { uploadImage } from "../services/imageService"; // Import image upload service
+import { uploadImage } from "../services/imageService";
 import { useNavigate } from "react-router-dom";
 
 const CourseCreationForm = () => {
@@ -28,10 +28,10 @@ const CourseCreationForm = () => {
         course_type: "Full Access",
         course_price: "",
     });
-    const [CLOs, setCLOs] = useState([""]); // Start with one CLO field
-    const [imageFile, setImageFile] = useState(null); // Store the selected image file
-    const [imageId, setImageId] = useState(null); // Store the uploaded image ID
-    const [isUploading, setIsUploading] = useState(false); // Track image upload status
+    const [CLOs, setCLOs] = useState([""]);
+    const [imageFile, setImageFile] = useState(null);
+    const [imageId, setImageId] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -81,7 +81,7 @@ const CourseCreationForm = () => {
 
         try {
             const result = await uploadImage(imageFile);
-            setImageId(result.image_id); // Set the uploaded image ID
+            setImageId(result.image_id);
             toast({
                 title: "Image uploaded successfully!",
                 status: "success",
@@ -106,7 +106,6 @@ const CourseCreationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate CLOs
         if (CLOs.some((clo) => clo.trim() === "")) {
             toast({
                 title: "Error",
@@ -118,12 +117,41 @@ const CourseCreationForm = () => {
             return;
         }
 
-        // Ensure image is uploaded before submission
-        const isImageUploaded = await uploadCourseImage();
-        if (!isImageUploaded) return;
+        // Check if an image has been selected
+        if (!imageFile) {
+            toast({
+                title: "Error",
+                description: "Please select an image before submitting.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
 
         try {
-            const result = await createCourse({ ...formData, CLOs, image_id: imageId });
+            // Upload the image first
+            const uploadResult = await uploadImage(imageFile);
+
+            // Verify the upload was successful and we have an image_id
+            if (!uploadResult.image_id) {
+                toast({
+                    title: "Error",
+                    description: "Image upload failed. Please try again.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+
+            // Create the course with the image_id from the upload
+            const result = await createCourse({
+                ...formData,
+                CLOs: JSON.stringify(CLOs),
+                image_id: uploadResult.image_id, // Use the image_id from upload result
+            });
+
             if (result.success) {
                 toast({
                     title: "Course created successfully!",
