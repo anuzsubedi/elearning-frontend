@@ -4,6 +4,7 @@ import { useAuth } from "./context/AuthContext";
 import Header from "./components/Header";
 import StudentHome from "./pages/StudentHome";
 import TeacherHome from "./pages/TeacherHome";
+import CourseCreation from "./pages/CourseCreation";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import TeacherRoute from "./components/TeacherRoute";
@@ -35,6 +36,7 @@ const App = () => {
                 {user?.user_type === "Instructor" && (
                     <Route element={<TeacherRoute />}>
                         <Route path="/teacher-home" element={<TeacherHome />} />
+                        <Route path="/create-course" element={<CourseCreation />} /> {/* New Route */}
                     </Route>
                 )}
 
