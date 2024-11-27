@@ -18,7 +18,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Teacher-only routes */}
+
+            {/* Teacher-only routes */} */
             <Route element={<TeacherRoute />}>
                 <Route path="/teacher-home" element={<TeacherHome />} />
             </Route>
