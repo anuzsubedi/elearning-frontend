@@ -12,8 +12,18 @@ export const createCourse = async (data) => {
 export const getInstructorCourses = async () => {
     try {
         const response = await axiosInstance.get("/courses/my-courses");
-        return { success: true, courses: response.data.courses };
+        console.log("Raw response:", response.data);
+
+        // Directly return the response data if it's an array
+        return {
+            success: true,
+            courses: Array.isArray(response.data) ? response.data : []
+        };
     } catch (error) {
-        return { success: false, message: error.response?.data?.message || "Failed to fetch courses." };
+        console.error("Error in getInstructorCourses:", error);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to fetch courses."
+        };
     }
 }
