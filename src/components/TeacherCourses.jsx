@@ -49,12 +49,13 @@ const TeacherCourses = () => {
         navigate("/create-course");
     };
 
-    // Animated button component
+    //animated add button
     const AnimatedAddButton = () => {
         return (
             <MotionButton
-                variant="outline"
-                colorScheme="orange"
+                variant="solid"
+                bg="#ff997f"
+                color="white"
                 onClick={handleCreateCourse}
                 display="flex"
                 alignItems="center"
@@ -77,7 +78,7 @@ const TeacherCourses = () => {
                 }}
                 boxShadow="sm"
                 _hover={{
-                    bg: "orange.50"
+                    bg: "#ff5f3f"
                 }}
             >
                 <Flex
@@ -86,6 +87,7 @@ const TeacherCourses = () => {
                     width="100%"
                 >
                     <AddIcon
+                        color="white"
                         mr={isHovered ? 2 : 0}
                         transition="margin 0.3s ease"
                     />
@@ -95,7 +97,10 @@ const TeacherCourses = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 }}
                         >
-                            <Text whiteSpace="nowrap">
+                            <Text
+                                whiteSpace="nowrap"
+                                color="white"
+                            >
                                 Add Course
                             </Text>
                         </motion.div>
@@ -106,12 +111,12 @@ const TeacherCourses = () => {
     };
 
     return (
-        <Center p={4}>
+        <Center>
             <Flex
                 direction="column"
                 width="full"
                 maxWidth="80%"
-                p={6}
+                mt={10}
             >
                 <Flex
                     justifyContent="space-between"
@@ -119,8 +124,9 @@ const TeacherCourses = () => {
                     mb={6}
                 >
                     <Heading
-                        as="h2"
-                        size="lg"
+                        as="h3"
+                        size="md"
+                        fontFamily="Georgia, serif"
                     >
                         Your Courses
                     </Heading>
@@ -167,17 +173,20 @@ const TeacherCourses = () => {
                 )}
 
                 {!loading && courses.length > 0 && (
-                    <SimpleGrid
-                        columns={[1, 2, 3]}
-                        spacing={6}
-                    >
-                        {courses.map((course) => (
-                            <CourseCard
-                                key={course.course_id}
-                                course={course}
-                            />
-                        ))}
-                    </SimpleGrid>
+                    <Box
+                        mx="5">
+                        <SimpleGrid
+                            columns={[1, 2, 3]}
+                            spacing={6}
+                        >
+                            {courses.map((course) => (
+                                <CourseCard
+                                    key={course.course_id}
+                                    course={course}
+                                />
+                            ))}
+                        </SimpleGrid>
+                    </Box>
                 )}
             </Flex>
         </Center>

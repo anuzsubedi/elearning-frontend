@@ -11,29 +11,32 @@ import {
     Spacer,
 } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
     const { user, logoutUser } = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = async () => {
+        await logoutUser();
+        navigate("/login");
+    };
 
     return (
         <Flex
 
             px={6}
             py={4}
-            // boxShadow="md"
-
             top={0}
             left={0}
             right={0}
-            // zIndex="10"
-            maxW="80%" // Limit the width of the header to 80%
-            mx="auto" // Center the header container horizontally
+            maxW="80%"
+            mx="auto"
             mb={4}
             align="center"
             outline="1px solid #E2E8F0"
         >
-            <Text fontSize="lg" fontWeight="bold" color="brand.primary">
-                Next<span style={{ color: "#FC7753" }}>Academy</span>
+            <Text fontSize="3xl" fontWeight="bold" color="brand.primary">
+                Next<span style={{ color: "black" }}>Academy</span>
             </Text>
             <Spacer />
             {
@@ -45,7 +48,7 @@ const Header = () => {
                         <MenuList>
                             <MenuItem>My Details</MenuItem>
                             <MenuItem>My Courses</MenuItem>
-                            <MenuItem onClick={logoutUser}>Logout</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </MenuList>
                     </Menu>
                 ) : (
