@@ -5,7 +5,7 @@ export const signup = async (data) => {
     try {
         const response = await axiosInstance.post("/auth/signup", {
             ...data,
-            user_type: "Student", // Add user_type by default
+
         });
         return { success: true, message: response.data.message };
     } catch (error) {

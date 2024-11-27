@@ -8,7 +8,7 @@ const theme = extendTheme({
     styles: {
         global: {
             "html, body": {
-                backgroundColor: "#f8f8f8",
+                backgroundColor: "#f5f5f5",
                 fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`,
                 color: "#1a1a1a",
                 margin: 0,
@@ -23,6 +23,9 @@ const theme = extendTheme({
                     color: "#FC7753",
                 },
             },
+            "*, *::before, *::after": {
+                boxSizing: "border-box", // Consistent box-sizing
+            },
         },
     },
     colors: {
@@ -35,6 +38,8 @@ const theme = extendTheme({
             error: "#E57373",
             menuBg: "#FFFFFF",
             menuHover: "#F8F8F8",
+            switchTrack: "#FD856C", // Custom color for Switch track
+            switchThumb: "#FFFFFF", // Custom color for Switch thumb
         },
     },
     components: {
@@ -55,11 +60,14 @@ const theme = extendTheme({
             },
         },
         Input: {
+
             baseStyle: {
+
                 field: {
+
                     borderRadius: "8px",
-                    border: "2px solid",
-                    borderColor: "brand.border",
+                    border: "10px solid",
+                    borderColor: "#FF0000",
                     _hover: {
                         borderColor: "brand.inputHover",
                     },
@@ -67,6 +75,25 @@ const theme = extendTheme({
                         borderColor: "brand.focus",
                         boxShadow: "0 0 0 2px brand.focus",
                     },
+                    _invalid: {
+                        borderColor: "brand.error",
+                        boxShadow: "0 0 0 2px brand.error",
+                    },
+                },
+            },
+        },
+        Switch: {
+            baseStyle: {
+                track: {
+                    bg: "brand.border",
+                    _checked: {
+                        bg: "brand.switchTrack", // Ensure proper rendering in Firefox
+                    },
+                },
+                thumb: {
+                    bg: "brand.switchThumb", // Consistent thumb color
+                    borderWidth: "2px",
+                    borderColor: "brand.border",
                 },
             },
         },

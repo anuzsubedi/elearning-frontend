@@ -9,6 +9,8 @@ import {
   VStack,
   Text,
   Link,
+  Switch,
+  HStack,
 } from "@chakra-ui/react";
 import { signup } from "../services/authService";
 import { checkEmail } from "../services/emailService";
@@ -20,9 +22,11 @@ const Signup = () => {
     full_name: "",
     email: "",
     password: "",
+    user_type: "Student", // Default user type
   });
   const [emailError, setEmailError] = useState(null);
   const [generalError, setGeneralError] = useState(null);
+  const [isInstructor, setIsInstructor] = useState(false); // Track user type selection
   const navigate = useNavigate();
 
   const handleInputChange = async (e) => {
@@ -38,18 +42,27 @@ const Signup = () => {
     }
   };
 
+  const handleUserTypeToggle = (checked) => {
+    setIsInstructor(checked);
+    setFormData({ ...formData, user_type: checked ? "Instructor" : "Student" });
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     if (emailError) {
       setGeneralError("Please resolve the email error.");
       return;
     }
 
-    const result = await signup(formData);
-    if (result.success) {
-      navigate("/login");
-    } else {
-      setGeneralError(result.message);
+    try {
+      const result = await signup(formData);
+      if (result.success) {
+        navigate("/login");
+      } else {
+        setGeneralError(result.message);
+      }
+    } catch (err) {
+      setGeneralError("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -103,6 +116,14 @@ const Signup = () => {
                 onChange={handleInputChange}
               />
             </FormControl>
+            <HStack justifyContent="space-between" w="100%">
+              <FormLabel mb={0}>Sign up as Instructor</FormLabel>
+              <Switch
+                isChecked={isInstructor}
+                onChange={(e) => handleUserTypeToggle(e.target.checked)}
+                colorScheme="orange"
+              />
+            </HStack>
             <ErrorAlert message={generalError} />
             <Button type="submit" w="100%">
               Create Account
