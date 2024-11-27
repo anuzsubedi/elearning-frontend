@@ -33,7 +33,6 @@ const Header = () => {
             mx="auto"
             mb={4}
             align="center"
-            outline="1px solid #E2E8F0"
         >
             <Text fontSize="3xl" fontWeight="bold" color="brand.primary">
                 Next<span style={{ color: "black" }}>Academy</span>
