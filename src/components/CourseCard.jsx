@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Box, Image, Heading, Text, Button, Skeleton } from "@chakra-ui/react";
+import { Box, Image, Heading, Text, IconButton, Skeleton } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { getImage } from "../services/imageService"; // Import the image service
+import { EditIcon } from "@chakra-ui/icons"; // Import the Edit icon
 
 const CourseCard = ({ course }) => {
     const navigate = useNavigate();
@@ -51,7 +52,8 @@ const CourseCard = ({ course }) => {
             borderRadius="lg"
             overflow="hidden"
             transition="transform 0.2s"
-            _hover={{ transform: "scale(1.05)" }}
+            _hover={{ transform: "scale(1.005)" }}
+            position="relative"
         >
             {imageLoading ? (
                 <Skeleton height="150px" width="100%" />
@@ -82,10 +84,18 @@ const CourseCard = ({ course }) => {
                 <Text color="gray.500" fontSize="sm" mb={4}>
                     {new Date(course.created_at).toLocaleDateString()}
                 </Text>
-                <Button size="sm" colorScheme="blue" onClick={handleEdit}>
-                    Update Course
-                </Button>
             </Box>
+
+            <IconButton
+                icon={<EditIcon />}
+                colorScheme="blue"
+                size="sm"
+                position="absolute"
+                top="10px"
+                right="10px"
+                onClick={handleEdit}
+                aria-label="Edit Course"
+            />
         </Box>
     );
 };
