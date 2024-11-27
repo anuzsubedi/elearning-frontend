@@ -27,3 +27,18 @@ export const getInstructorCourses = async () => {
         };
     }
 }
+
+export const getAllCourses = async () => {
+    try {
+        const response = await axiosInstance.get("/courses/all");
+        return {
+            success: true,
+            courses: Array.isArray(response.data) ? response.data : []
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to fetch courses."
+        };
+    }
+}
