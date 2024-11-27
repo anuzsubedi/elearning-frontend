@@ -3,56 +3,69 @@ import { extendTheme } from "@chakra-ui/react";
 const theme = extendTheme({
     config: {
         initialColorMode: "light",
-        useSystemColorMode: false, // Force light mode globally
+        useSystemColorMode: false,
+    },
+    colors: {
+        brand: {
+            primary: "#FD856C",
+            secondary: "#FC7753",
+            border: "#CCCCCC",
+            borderHover: "#AAAAAA",
+            focus: "#FD856C",
+            error: "#E57373",
+            background: "#f5f5f5",
+            text: "#1a1a1a",
+            menuBg: "#FFFFFF",
+            menuHover: "#F5F5F5"
+        },
     },
     styles: {
         global: {
             "html, body": {
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "brand.background",
+                color: "brand.text",
                 fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`,
-                color: "#1a1a1a",
                 margin: 0,
                 padding: 0,
                 minHeight: "100vh",
             },
             a: {
-                color: "#FD856C",
+                color: "brand.primary",
                 textDecoration: "none",
                 fontWeight: 500,
                 _hover: {
-                    color: "#FC7753",
+                    color: "brand.secondary",
                 },
             },
-            "*, *::before, *::after": {
-                boxSizing: "border-box", // Consistent box-sizing
-            },
-        },
-    },
-    colors: {
-        brand: {
-            primary: "#FD856C",
-            hover: "#FC7753",
-            border: "#E0E0E0",
-            focus: "#FD856C",
-            inputHover: "#FFAA94",
-            error: "#E57373",
-            menuBg: "#FFFFFF",
-            menuHover: "#F8F8F8",
-            switchTrack: "#FD856C", // Custom color for Switch track
-            switchThumb: "#FFFFFF", // Custom color for Switch thumb
         },
     },
     components: {
         Button: {
             baseStyle: {
-                borderRadius: "999px",
-                fontWeight: "bold",
+                borderRadius: "8px",
+                fontWeight: "600",
+                transition: "all 0.2s",
             },
             variants: {
                 solid: {
                     bg: "brand.primary",
                     color: "white",
-                    _hover: { bg: "brand.hover" },
+                    _hover: {
+                        bg: "brand.secondary",
+                        transform: "translateY(-1px)",
+                    },
+                    _active: {
+                        transform: "translateY(0)",
+                    }
+                },
+                outline: {
+                    border: "2px solid",
+                    borderColor: "brand.primary",
+                    color: "brand.primary",
+                    _hover: {
+                        bg: "brand.primary",
+                        color: "white",
+                    },
                 },
             },
             defaultProps: {
@@ -60,26 +73,53 @@ const theme = extendTheme({
             },
         },
         Input: {
-
-            baseStyle: {
-
-                field: {
-
+            variants: {
+                outline: {
+                    field: {
+                        borderRadius: "8px",
+                        borderWidth: "1px",
+                        borderColor: "brand.border",
+                        transition: "all 0.2s",
+                        _hover: {
+                            borderColor: "brand.borderHover",
+                        },
+                        _focus: {
+                            borderColor: "brand.focus",
+                            boxShadow: "0 0 0 1px var(--chakra-colors-brand-focus)",
+                        },
+                        _invalid: {
+                            borderColor: "brand.error",
+                            boxShadow: "0 0 0 1px var(--chakra-colors-brand-error)",
+                        },
+                    },
+                },
+            },
+            defaultProps: {
+                variant: "outline",
+            },
+        },
+        Textarea: {
+            variants: {
+                outline: {
                     borderRadius: "8px",
-                    border: "10px solid",
-                    borderColor: "#FF0000",
+                    borderWidth: "1px",
+                    borderColor: "brand.border",
+                    transition: "all 0.2s",
                     _hover: {
-                        borderColor: "brand.inputHover",
+                        borderColor: "brand.borderHover",
                     },
                     _focus: {
                         borderColor: "brand.focus",
-                        boxShadow: "0 0 0 2px brand.focus",
+                        boxShadow: "0 0 0 1px var(--chakra-colors-brand-focus)",
                     },
                     _invalid: {
                         borderColor: "brand.error",
-                        boxShadow: "0 0 0 2px brand.error",
+                        boxShadow: "0 0 0 1px var(--chakra-colors-brand-error)",
                     },
                 },
+            },
+            defaultProps: {
+                variant: "outline",
             },
         },
         Switch: {
@@ -87,13 +127,11 @@ const theme = extendTheme({
                 track: {
                     bg: "brand.border",
                     _checked: {
-                        bg: "brand.switchTrack", // Ensure proper rendering in Firefox
+                        bg: "brand.primary",
                     },
                 },
                 thumb: {
-                    bg: "brand.switchThumb", // Consistent thumb color
-                    borderWidth: "2px",
-                    borderColor: "brand.border",
+                    bg: "white",
                 },
             },
         },
@@ -101,15 +139,15 @@ const theme = extendTheme({
             baseStyle: {
                 list: {
                     bg: "brand.menuBg",
-                    border: "none",
-                    boxShadow: "none",
+                    borderRadius: "8px",
+                    boxShadow: "lg",
                 },
                 item: {
-                    bg: "brand.menuBg",
-                    color: "#1a1a1a",
-                    px: 4,
-                    py: 2,
+                    bg: "transparent",
                     _hover: {
+                        bg: "brand.menuHover",
+                    },
+                    _focus: {
                         bg: "brand.menuHover",
                     },
                 },
