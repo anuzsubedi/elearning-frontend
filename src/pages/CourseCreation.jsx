@@ -22,8 +22,9 @@ import {
     Tag,
     TagLabel,
     TagCloseButton,
+    Tooltip,
 } from "@chakra-ui/react";
-import { AddIcon, CloseIcon, ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon, ArrowBackIcon, CheckIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { createCourse } from "../services/courseServices";
 import { uploadImage } from "../services/imageService";
 import { useNavigate } from "react-router-dom";
@@ -324,7 +325,12 @@ const CourseCreationForm = () => {
                                         </FormControl>
 
                                         <FormControl>
-                                            <FormLabel fontSize="sm">Tags</FormLabel>
+                                            <FormLabel fontSize="sm">
+                                                Tags
+                                                <Tooltip label="Tags help in categorizing and searching for courses" fontSize="md">
+                                                    <InfoOutlineIcon ml={2} />
+                                                </Tooltip>
+                                            </FormLabel>
                                             <HStack>
                                                 <Input
                                                     value={tagInput}
@@ -340,7 +346,7 @@ const CourseCreationForm = () => {
                                                     Add Tag
                                                 </Button>
                                             </HStack>
-                                            <VStack mt={2} align="start">
+                                            <HStack mt={2} wrap="wrap">
                                                 {tags.map((tag, index) => (
                                                     <Tag
                                                         key={index}
@@ -348,12 +354,13 @@ const CourseCreationForm = () => {
                                                         borderRadius="full"
                                                         variant="solid"
                                                         colorScheme="blue"
+                                                        m={1}
                                                     >
                                                         <TagLabel>{tag}</TagLabel>
                                                         <TagCloseButton onClick={() => removeTag(tag)} />
                                                     </Tag>
                                                 ))}
-                                            </VStack>
+                                            </HStack>
                                         </FormControl>
                                     </VStack>
                                 </MotionBox>
