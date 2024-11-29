@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Heading,
@@ -12,14 +12,27 @@ import {
     HStack,
     IconButton,
     useToast,
-    Spinner,
+    FormErrorMessage,
+    useColorMode,
+    Image,
+    Grid,
+    GridItem,
+    Divider,
+    Text,
 } from "@chakra-ui/react";
-import { AddIcon, CloseIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon, ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
 import { createCourse } from "../services/courseServices";
 import { uploadImage } from "../services/imageService";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const MotionBox = motion(Box);
 
 const CourseCreationForm = () => {
+    const { setColorMode } = useColorMode();
+    const navigate = useNavigate();
+    const toast = useToast();
+
     const [formData, setFormData] = useState({
         course_name: "",
         course_description: "",
@@ -28,281 +41,430 @@ const CourseCreationForm = () => {
         course_type: "Full Access",
         course_price: "",
     });
+
+    const [errors, setErrors] = useState({});
     const [CLOs, setCLOs] = useState([""]);
     const [imageFile, setImageFile] = useState(null);
-    const [imageId, setImageId] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
-    const toast = useToast();
-    const navigate = useNavigate();
+    const [imageId, setImageId] = useState(null);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
 
-    const handleBack = () => {
-        navigate("/teacher-home");
+    useEffect(() => {
+        setColorMode('light');
+    }, [setColorMode]);
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.course_name.trim()) newErrors.course_name = "Course name is required";
+        if (!formData.course_description.trim()) newErrors.course_description = "Description is required";
+        if (!formData.course_price) newErrors.course_price = "Price is required";
+        if (!imageFile) newErrors.image = "Course image is required";
+        if (CLOs.some(clo => !clo.trim())) newErrors.clos = "All learning outcomes must be filled";
+        if (formData.course_price <= 0) newErrors.course_price = "Price must be greater than 0";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                toast({
+                    title: "Invalid file type",
+                    description: "Please upload a JPG, PNG, or WEBP image",
+                    status: "error",
+                    duration: 3000,
+                });
+                return;
+            }
+
+            if (file.size > 5242880) { // 5MB limit
+                toast({
+                    title: "File too large",
+                    description: "Image size should be less than 5MB",
+                    status: "error",
+                    duration: 3000,
+                });
+                return;
+            }
+
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagePreview(reader.result);
+            reader.readAsDataURL(file);
+            if (errors.image) {
+                setErrors(prev => ({ ...prev, image: null }));
+            }
+        }
+    };
+
+    const handleImageUpload = async () => {
+        if (!imageFile) {
+            toast({
+                title: "No image file provided",
+                description: "Please select an image file to upload",
+                status: "error",
+                duration: 3000,
+            });
+            return;
+        }
+
+        setIsUploading(true);
+
+        try {
+            const uploadResult = await uploadImage(imageFile);
+
+            if (!uploadResult.image_id) {
+                throw new Error("Image upload failed");
+            }
+
+            setImageId(uploadResult.image_id);
+            setIsUploading(false);
+            setIsImageUploaded(true);
+            toast({
+                title: "Image uploaded successfully!",
+                status: "success",
+                duration: 3000,
+            });
+        } catch (err) {
+            setIsUploading(false);
+            toast({
+                title: "Error",
+                description: err.message || "Image upload failed",
+                status: "error",
+                duration: 3000,
+            });
+        }
     };
 
     const handleCLOChange = (index, value) => {
         const updatedCLOs = [...CLOs];
         updatedCLOs[index] = value;
         setCLOs(updatedCLOs);
-    };
-
-    const addCLOField = () => {
-        if (CLOs.length < 5) {
-            setCLOs([...CLOs, ""]);
+        if (errors.clos) {
+            setErrors(prev => ({ ...prev, clos: null }));
         }
     };
 
-    const removeCLOField = (index) => {
-        const updatedCLOs = CLOs.filter((_, i) => i !== index);
-        setCLOs(updatedCLOs);
-    };
-
-    const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
-
-    const uploadCourseImage = async () => {
-        if (!imageFile) {
-            toast({
-                title: "Error",
-                description: "Please select an image before submitting.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-            return false;
-        }
-
-        setIsUploading(true);
-
-        try {
-            const result = await uploadImage(imageFile);
-            setImageId(result.image_id);
-            toast({
-                title: "Image uploaded successfully!",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
-            setIsUploading(false);
-            return true;
-        } catch (err) {
-            toast({
-                title: "Error",
-                description: "Image upload failed. Please try again.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-            setIsUploading(false);
-            return false;
-        }
-    };
+    const addCLOField = () => CLOs.length < 5 && setCLOs([...CLOs, ""]);
+    const removeCLOField = (index) => setCLOs(CLOs.filter((_, i) => i !== index));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (CLOs.some((clo) => clo.trim() === "")) {
+        if (isUploading) {
             toast({
-                title: "Error",
-                description: "Please ensure all CLO fields are filled.",
+                title: "Image is still uploading",
+                description: "Please wait until the image upload is complete",
                 status: "error",
                 duration: 3000,
-                isClosable: true,
             });
             return;
         }
 
-        // Check if an image has been selected
-        if (!imageFile) {
+        if (!validateForm()) {
             toast({
-                title: "Error",
-                description: "Please select an image before submitting.",
+                title: "Validation Error",
+                description: "Please check all required fields",
                 status: "error",
                 duration: 3000,
-                isClosable: true,
             });
             return;
         }
+
+        setIsSubmitting(true);
 
         try {
-            // Upload the image first
-            const uploadResult = await uploadImage(imageFile);
-
-            // Verify the upload was successful and we have an image_id
-            if (!uploadResult.image_id) {
-                toast({
-                    title: "Error",
-                    description: "Image upload failed. Please try again.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                return;
-            }
-
-            // Create the course with the image_id from the upload
-            const result = await createCourse({
+            // Create course with uploaded image
+            const courseData = {
                 ...formData,
                 CLOs: JSON.stringify(CLOs),
-                image_id: uploadResult.image_id, // Use the image_id from upload result
-            });
+                image_id: imageId,
+            };
+
+            const result = await createCourse(courseData);
 
             if (result.success) {
                 toast({
-                    title: "Course created successfully!",
+                    title: "Success!",
+                    description: "Your course has been created",
                     status: "success",
                     duration: 3000,
-                    isClosable: true,
                 });
                 navigate("/teacher-home");
             } else {
-                toast({
-                    title: "Error",
-                    description: result.message,
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
+                throw new Error(result.message || "Failed to create course");
             }
         } catch (err) {
             toast({
                 title: "Error",
-                description: "An unexpected error occurred.",
+                description: err.message || "An unexpected error occurred",
                 status: "error",
-                duration: 3000,
-                isClosable: true,
+                duration: 4000,
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <Box bg="gray.50" minHeight="100vh" display="flex" alignItems="center" justifyContent="center" py={10}>
-            <Box maxW="700px" w="full" p={8} borderRadius="lg" bg="white" boxShadow="lg">
-                <HStack mb={6} spacing={4} align="center">
+        <Box
+            minH="100vh"
+            bg="gray.50"
+            position="relative"
+        >
+            <Box
+                position="fixed"
+                top="0"
+                left="0"
+                right="0"
+                bg="white"
+                borderBottom="1px"
+                borderColor="gray.100"
+                zIndex="sticky"
+                px={8}
+                py={4}
+            >
+                <HStack spacing={4} maxW="1200px" mx="auto">
                     <IconButton
                         icon={<ArrowBackIcon />}
-                        variant="solid"
-                        colorScheme="orange"
-                        onClick={handleBack}
-                        aria-label="Go back to teacher home"
+                        variant="ghost"
+                        onClick={() => navigate("/teacher-home")}
+                        _hover={{ bg: 'gray.100' }}
+                        aria-label="Go back"
                     />
-                    <Heading as="h1" size="xl" textAlign="center" color="orange.500" flex={1}>
+                    <Heading size="lg" color="gray.800">
                         Create a New Course
                     </Heading>
                 </HStack>
+            </Box>
 
+            <Box
+                maxW="1200px"
+                mx="auto"
+                pt="24"
+                px={8}
+                pb={20}
+            >
                 <form onSubmit={handleSubmit}>
-                    <VStack spacing={6} align="stretch">
-                        <FormControl isRequired>
-                            <FormLabel>Course Name</FormLabel>
-                            <Input
-                                type="text"
-                                name="course_name"
-                                value={formData.course_name}
-                                onChange={handleInputChange}
-                                placeholder="Enter course name"
-                                maxLength={100}
-                            />
-                        </FormControl>
+                    <Grid templateColumns="repeat(12, 1fr)" gap={8}>
+                        {/* Left Column */}
+                        <GridItem colSpan={{ base: 12, md: 8 }}>
+                            <VStack spacing={8} align="stretch">
+                                <MotionBox
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                >
+                                    <Heading size="md" mb={6}>Course Details</Heading>
+                                    <VStack spacing={6}>
+                                        <FormControl isRequired isInvalid={errors.course_name}>
+                                            <FormLabel fontSize="sm">Course Name</FormLabel>
+                                            <Input
+                                                name="course_name"
+                                                value={formData.course_name}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter a descriptive name"
+                                                size="lg"
+                                                bg="white"
+                                                borderWidth="2px"
+                                                _hover={{ borderColor: 'gray.300' }}
+                                                _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                                            />
+                                            <FormErrorMessage>{errors.course_name}</FormErrorMessage>
+                                        </FormControl>
 
-                        <FormControl isRequired>
-                            <FormLabel>Course Description</FormLabel>
-                            <Textarea
-                                name="course_description"
-                                value={formData.course_description}
-                                onChange={handleInputChange}
-                                placeholder="Enter course description"
-                                maxLength={500}
-                            />
-                        </FormControl>
+                                        <FormControl isRequired isInvalid={errors.course_description}>
+                                            <FormLabel fontSize="sm">Course Description</FormLabel>
+                                            <Textarea
+                                                name="course_description"
+                                                value={formData.course_description}
+                                                onChange={handleInputChange}
+                                                placeholder="What will students learn in this course?"
+                                                size="lg"
+                                                bg="white"
+                                                borderWidth="2px"
+                                                minH="150px"
+                                                _hover={{ borderColor: 'gray.300' }}
+                                                _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                                            />
+                                            <FormErrorMessage>{errors.course_description}</FormErrorMessage>
+                                        </FormControl>
+                                    </VStack>
+                                </MotionBox>
 
-                        <FormControl isRequired>
-                            <FormLabel>Upload Image</FormLabel>
-                            <Input type="file" accept="image/*" onChange={handleImageChange} />
-                            {isUploading && <Spinner size="sm" color="orange.500" mt={2} />}
-                        </FormControl>
+                                <Divider my={8} />
 
-                        <HStack spacing={4}>
-                            <FormControl isRequired>
-                                <FormLabel>Difficulty Level</FormLabel>
-                                <Select name="difficulty" value={formData.difficulty} onChange={handleInputChange}>
-                                    <option value="Beginner">Beginner</option>
-                                    <option value="Intermediate">Intermediate</option>
-                                    <option value="Advanced">Advanced</option>
-                                </Select>
-                            </FormControl>
+                                <MotionBox
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    <Heading size="md" mb={6}>Learning Outcomes</Heading>
+                                    <VStack spacing={4}>
+                                        {CLOs.map((clo, index) => (
+                                            <HStack key={index} width="full" spacing={2}>
+                                                <FormControl isRequired isInvalid={errors.clos}>
+                                                    <Input
+                                                        value={clo}
+                                                        onChange={(e) => handleCLOChange(index, e.target.value)}
+                                                        placeholder={`Outcome ${index + 1}: Students will be able to...`}
+                                                        bg="white"
+                                                        borderWidth="2px"
+                                                        size="lg"
+                                                    />
+                                                </FormControl>
+                                                {index > 0 && (
+                                                    <IconButton
+                                                        icon={<CloseIcon />}
+                                                        onClick={() => removeCLOField(index)}
+                                                        variant="ghost"
+                                                        colorScheme="red"
+                                                        size="lg"
+                                                    />
+                                                )}
+                                            </HStack>
+                                        ))}
+                                        {CLOs.length < 5 && (
+                                            <Button
+                                                leftIcon={<AddIcon />}
+                                                onClick={addCLOField}
+                                                variant="ghost"
+                                                colorScheme="blue"
+                                                alignSelf="start"
+                                            >
+                                                Add Learning Outcome
+                                            </Button>
+                                        )}
+                                    </VStack>
+                                </MotionBox>
+                            </VStack>
+                        </GridItem>
 
-                            <FormControl isRequired>
-                                <FormLabel>Course Type</FormLabel>
-                                <Select name="course_type" value={formData.course_type} onChange={handleInputChange}>
-                                    <option value="Full Access">Full Access</option>
-                                    <option value="Limited Access">Limited Access</option>
-                                </Select>
-                            </FormControl>
-                        </HStack>
+                        {/* Right Column */}
+                        <GridItem colSpan={{ base: 12, md: 4 }}>
+                            <MotionBox
+                                position="sticky"
+                                top="100px"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 }}
+                            >
+                                <VStack
+                                    spacing={6}
+                                    bg="white"
+                                    p={6}
+                                    borderRadius="lg"
+                                    borderWidth="2px"
+                                    borderColor="gray.100"
+                                >
+                                    <FormControl isRequired isInvalid={errors.image}>
+                                        <FormLabel fontSize="sm">Course Image</FormLabel>
+                                        <Box
+                                            borderWidth={2}
+                                            borderStyle="dashed"
+                                            borderRadius="md"
+                                            p={4}
+                                            textAlign="center"
+                                            cursor="pointer"
+                                            _hover={{ bg: 'gray.50' }}
+                                            onClick={() => document.getElementById('imageInput').click()}
+                                        >
+                                            <Input
+                                                id="imageInput"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                hidden
+                                            />
+                                            {imagePreview ? (
+                                                <Image
+                                                    src={imagePreview}
+                                                    maxH="150px"
+                                                    objectFit="cover"
+                                                    borderRadius="md"
+                                                />
+                                            ) : (
+                                                <Text color="gray.500">Click to upload course image</Text>
+                                            )}
+                                        </Box>
+                                        <FormErrorMessage>{errors.image}</FormErrorMessage>
+                                    </FormControl>
 
-                        <FormControl isRequired>
-                            <FormLabel>Difficulty Description</FormLabel>
-                            <Textarea
-                                name="difficulty_description"
-                                value={formData.difficulty_description}
-                                onChange={handleInputChange}
-                                placeholder="Describe the difficulty level"
-                                maxLength={200}
-                            />
-                        </FormControl>
-
-                        <FormControl isRequired>
-                            <FormLabel>Course Price ($)</FormLabel>
-                            <Input
-                                type="number"
-                                name="course_price"
-                                value={formData.course_price}
-                                onChange={handleInputChange}
-                                placeholder="Price"
-                                min="0"
-                                step="0.01"
-                            />
-                        </FormControl>
-
-                        <FormControl>
-                            <FormLabel>Course Learning Outcomes (CLOs)</FormLabel>
-                            {CLOs.map((clo, index) => (
-                                <HStack key={index} mb={2}>
-                                    <Input
-                                        value={clo}
-                                        onChange={(e) => handleCLOChange(index, e.target.value)}
-                                        placeholder={`Learning Outcome ${index + 1}`}
-                                        maxLength={100}
-                                    />
-                                    {index > 0 && (
-                                        <IconButton
-                                            icon={<CloseIcon />}
-                                            size="sm"
-                                            aria-label="Remove CLO"
-                                            onClick={() => removeCLOField(index)}
-                                            colorScheme="red"
-                                            variant="outline"
-                                        />
+                                    {isUploading && (
+                                        <Text color="blue.500">Uploading...</Text>
                                     )}
-                                </HStack>
-                            ))}
-                            {CLOs.length < 5 && (
-                                <Button size="sm" leftIcon={<AddIcon />} onClick={addCLOField} mt={2} colorScheme="orange" variant="outline">
-                                    Add Learning Outcome
-                                </Button>
-                            )}
-                        </FormControl>
 
-                        <Button type="submit" colorScheme="orange" size="lg" w="100%" mt={4} isDisabled={isUploading}>
-                            Create Course
-                        </Button>
-                    </VStack>
+                                    {!isUploading && isImageUploaded && (
+                                        <HStack>
+                                            <CheckIcon color="green.500" />
+                                            <Text color="green.500">Image uploaded</Text>
+                                        </HStack>
+                                    )}
+
+                                    {!isImageUploaded && (
+                                        <Button
+                                            onClick={handleImageUpload}
+                                            colorScheme="blue"
+                                            size="lg"
+                                            width="full"
+                                        >
+                                            Upload Image
+                                        </Button>
+                                    )}
+
+                                    <FormControl isRequired>
+                                        <FormLabel fontSize="sm">Difficulty Level</FormLabel>
+                                        <Select
+                                            name="difficulty"
+                                            value={formData.difficulty}
+                                            onChange={handleInputChange}
+                                            size="lg"
+                                        >
+                                            <option value="Beginner">Beginner</option>
+                                            <option value="Intermediate">Intermediate</option>
+                                            <option value="Advanced">Advanced</option>
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl isRequired isInvalid={errors.course_price}>
+                                        <FormLabel fontSize="sm">Course Price ($)</FormLabel>
+                                        <Input
+                                            type="number"
+                                            name="course_price"
+                                            value={formData.course_price}
+                                            onChange={handleInputChange}
+                                            placeholder="29.99"
+                                            size="lg"
+                                        />
+                                        <FormErrorMessage>{errors.course_price}</FormErrorMessage>
+                                    </FormControl>
+
+                                    <Button
+                                        type="submit"
+                                        colorScheme="blue"
+                                        size="lg"
+                                        width="full"
+                                        isLoading={isSubmitting}
+                                        loadingText="Creating..."
+                                    >
+                                        Create Course
+                                    </Button>
+                                </VStack>
+                            </MotionBox>
+                        </GridItem>
+                    </Grid>
                 </form>
             </Box>
         </Box>
