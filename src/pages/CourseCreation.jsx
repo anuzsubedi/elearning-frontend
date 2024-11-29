@@ -19,6 +19,9 @@ import {
     GridItem,
     Divider,
     Text,
+    Tag,
+    TagLabel,
+    TagCloseButton,
 } from "@chakra-ui/react";
 import { AddIcon, CloseIcon, ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
 import { createCourse } from "../services/courseServices";
@@ -44,6 +47,8 @@ const CourseCreationForm = () => {
 
     const [errors, setErrors] = useState({});
     const [CLOs, setCLOs] = useState([""]);
+    const [tags, setTags] = useState([]);
+    const [tagInput, setTagInput] = useState("");
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -161,6 +166,21 @@ const CourseCreationForm = () => {
     const addCLOField = () => CLOs.length < 5 && setCLOs([...CLOs, ""]);
     const removeCLOField = (index) => setCLOs(CLOs.filter((_, i) => i !== index));
 
+    const handleTagInputChange = (e) => {
+        setTagInput(e.target.value);
+    };
+
+    const addTag = () => {
+        if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+            setTags([...tags, tagInput.trim()]);
+            setTagInput("");
+        }
+    };
+
+    const removeTag = (tagToRemove) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -191,6 +211,7 @@ const CourseCreationForm = () => {
             const courseData = {
                 ...formData,
                 CLOs: JSON.stringify(CLOs),
+                tags: JSON.stringify(tags),
                 image_id: imageId,
             };
 
@@ -300,6 +321,39 @@ const CourseCreationForm = () => {
                                                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
                                             />
                                             <FormErrorMessage>{errors.course_description}</FormErrorMessage>
+                                        </FormControl>
+
+                                        <FormControl>
+                                            <FormLabel fontSize="sm">Tags</FormLabel>
+                                            <HStack>
+                                                <Input
+                                                    value={tagInput}
+                                                    onChange={handleTagInputChange}
+                                                    placeholder="Add a tag"
+                                                    size="lg"
+                                                    bg="white"
+                                                    borderWidth="2px"
+                                                    _hover={{ borderColor: 'gray.300' }}
+                                                    _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                                                />
+                                                <Button onClick={addTag} colorScheme="blue" size="lg">
+                                                    Add Tag
+                                                </Button>
+                                            </HStack>
+                                            <VStack mt={2} align="start">
+                                                {tags.map((tag, index) => (
+                                                    <Tag
+                                                        key={index}
+                                                        size="lg"
+                                                        borderRadius="full"
+                                                        variant="solid"
+                                                        colorScheme="blue"
+                                                    >
+                                                        <TagLabel>{tag}</TagLabel>
+                                                        <TagCloseButton onClick={() => removeTag(tag)} />
+                                                    </Tag>
+                                                ))}
+                                            </VStack>
                                         </FormControl>
                                     </VStack>
                                 </MotionBox>
