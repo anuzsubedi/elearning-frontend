@@ -65,6 +65,8 @@ const CourseCreationForm = () => {
         const newErrors = {};
         if (!formData.course_name.trim()) newErrors.course_name = "Course name is required";
         if (!formData.course_description.trim()) newErrors.course_description = "Description is required";
+        if (!formData.difficulty_description.trim()) newErrors.difficulty_description = "Difficulty description is required";
+        if (formData.difficulty_description.length > 50) newErrors.difficulty_description = "Difficulty description must be less than 50 characters";
         if (!formData.course_price) newErrors.course_price = "Price is required";
         if (!imageFile) newErrors.image = "Course image is required";
         if (CLOs.some(clo => !clo.trim())) newErrors.clos = "All learning outcomes must be filled";
@@ -322,6 +324,23 @@ const CourseCreationForm = () => {
                                                 _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
                                             />
                                             <FormErrorMessage>{errors.course_description}</FormErrorMessage>
+                                        </FormControl>
+
+                                        <FormControl isRequired isInvalid={errors.difficulty_description}>
+                                            <FormLabel fontSize="sm">Difficulty Description</FormLabel>
+                                            <Input
+                                                name="difficulty_description"
+                                                value={formData.difficulty_description}
+                                                onChange={handleInputChange}
+                                                placeholder="No Prior Experience Required"
+                                                size="lg"
+                                                bg="white"
+                                                borderWidth="2px"
+                                                maxLength={50}
+                                                _hover={{ borderColor: 'gray.300' }}
+                                                _focus={{ borderColor: 'blue.500', boxShadow: 'none' }}
+                                            />
+                                            <FormErrorMessage>{errors.difficulty_description}</FormErrorMessage>
                                         </FormControl>
 
                                         <FormControl>
