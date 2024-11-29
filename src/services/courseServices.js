@@ -42,3 +42,35 @@ export const getAllCourses = async () => {
         };
     }
 }
+
+export const getCourseById = async (courseId) => {
+    try {
+        const response = await axiosInstance.get(`/courses/${courseId}`);
+        return {
+            success: true,
+            course: response.data
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to fetch course."
+        };
+    }
+}
+
+export const editCourse = async (courseId, courseData) => {
+    try {
+        const response = await axiosInstance.put(`/courses/${courseId}`, courseData);
+
+        return {
+            success: true,
+            course: response.data,
+            message: "Course updated successfully"
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to update course."
+        };
+    }
+};

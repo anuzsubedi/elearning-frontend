@@ -531,6 +531,19 @@ const CourseCreationForm = () => {
                                         <FormErrorMessage>{errors.course_price}</FormErrorMessage>
                                     </FormControl>
 
+                                    <FormControl isRequired>
+                                        <FormLabel fontSize="sm">Course Type</FormLabel>
+                                        <Select
+                                            name="course_type"
+                                            value={formData.course_type}
+                                            onChange={handleInputChange}
+                                            size="lg"
+                                        >
+                                            <option value="Full Access">Full Accesss</option>
+                                            <option value="Subscription">Subscription</option>
+                                        </Select>
+                                    </FormControl>
+
                                     <Button
                                         type="submit"
                                         colorScheme="blue"
