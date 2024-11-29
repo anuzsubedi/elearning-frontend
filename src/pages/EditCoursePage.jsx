@@ -28,9 +28,11 @@ import {
 import { CloseIcon, AddIcon, ArrowBackIcon, CheckIcon, InfoOutlineIcon } from "@chakra-ui/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCourseById, editCourse } from "../services/courseServices";
+import { getImage } from "../services/imageService";
 import { uploadImage } from "../services/imageService";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+
 
 // Framer Motion Box for animations
 const MotionBox = motion(Box);
@@ -59,6 +61,8 @@ const EditCoursePage = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [imageId, setImageId] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
+    const [hasImageChanged, setHasImageChanged] = useState(false);
 
     useEffect(() => {
 
@@ -90,6 +94,7 @@ const EditCoursePage = () => {
                     setCLOs(Array.isArray(course.CLOs) ? course.CLOs : JSON.parse(course.CLOs || "[]"));
                     setTags(Array.isArray(course.tags) ? course.tags : JSON.parse(course.tags || "[]"));
                     setImageId(course.image_id);
+                    fetchCourseImage(course.image_id);
                     setImagePreview(course.image_url || null);
                     setLoading(false);
                 } else {
@@ -106,8 +111,27 @@ const EditCoursePage = () => {
             }
         };
 
+        const fetchCourseImage = async (imageId) => {
+            try {
+                const result = await getImage(imageId);
+                if (result.success) {
+                    setImagePreview(result.imageUrl);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                toast({
+                    title: "Error",
+                    description: error.message || "Failed to fetch course image.",
+                    status: "error",
+                    duration: 4000,
+                });
+            }
+        };
 
         fetchCourseData();
+
+
 
 
     }, [id, currentUser.id, navigate, toast, isTeacher]);
@@ -144,6 +168,7 @@ const EditCoursePage = () => {
                 return;
             }
             setImageFile(file);
+            setHasImageChanged(true);
             const reader = new FileReader();
             reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
@@ -167,6 +192,7 @@ const EditCoursePage = () => {
             if (!uploadResult.image_id) throw new Error("Image upload failed");
             setImageId(uploadResult.image_id);
             setIsUploading(false);
+            setHasImageChanged(false);
             toast({
                 title: "Image uploaded successfully!",
                 status: "success",
@@ -220,7 +246,7 @@ const EditCoursePage = () => {
                 ...formData,
                 CLOs,
                 tags,
-                image_id: imageId,
+                image_id: imageId, // Include imageId in the form data
             };
             const result = await editCourse(id, updatedData);
             if (result.success) {
@@ -447,7 +473,7 @@ const EditCoursePage = () => {
                                         borderWidth="2px"
                                         borderColor="brand.border"
                                     >
-                                        <FormControl isRequired>
+                                        <FormControl>
                                             <FormLabel fontSize="sm">Course Image</FormLabel>
                                             <Box
                                                 borderWidth={2}
@@ -466,23 +492,30 @@ const EditCoursePage = () => {
                                                     onChange={handleImageChange}
                                                     hidden
                                                 />
-                                                {imagePreview ? (
-                                                    <Image
-                                                        src={imagePreview}
-                                                        maxH="150px"
-                                                        objectFit="cover"
-                                                        borderRadius="md"
-                                                    />
-                                                ) : (
-                                                    <Text color="gray.500">Click to upload course image</Text>
-                                                )}
+                                                <Image
+                                                    src={imagePreview}
+                                                    maxH="150px"
+                                                    objectFit="cover"
+                                                    borderRadius="md"
+                                                />
                                             </Box>
                                             {isUploading && <Text color="blue.500">Uploading...</Text>}
-                                            {imageId && !isUploading && (
+                                            {imageId && !isUploading && !hasImageChanged && (
                                                 <HStack mt={2}>
                                                     <CheckIcon color="green.500" />
                                                     <Text color="green.500">Image uploaded successfully!</Text>
                                                 </HStack>
+                                            )}
+
+                                            {!isImageUploaded && (
+                                                <Button
+                                                    onClick={handleImageUpload}
+                                                    colorScheme="blue"
+                                                    size="lg"
+                                                    width="full"
+                                                >
+                                                    Upload Image
+                                                </Button>
                                             )}
                                         </FormControl>
 
