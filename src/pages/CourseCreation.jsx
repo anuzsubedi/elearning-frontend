@@ -227,7 +227,8 @@ const CourseCreationForm = () => {
                     status: "success",
                     duration: 3000,
                 });
-                navigate("/teacher-home");
+                console.log(result.course_id);
+                navigate(`/courses/${result.course_id}/chapters`);
             } else {
                 throw new Error(result.message || "Failed to create course");
             }

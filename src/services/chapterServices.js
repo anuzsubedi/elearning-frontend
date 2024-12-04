@@ -17,7 +17,7 @@ export const createChapter = async (chapterData) => {
 export const getChaptersByCourse = async (courseId) => {
     try {
         const response = await axiosInstance.get(`/chapters/course/${courseId}`);
-        return { success: true, chapters: response.data.chapters };
+        return { success: true, chapters: response.data }; // Directly use the array
     } catch (error) {
         return {
             success: false,

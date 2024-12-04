@@ -6,6 +6,7 @@ import StudentHome from "./pages/StudentHome";
 import TeacherHome from "./pages/TeacherHome";
 import CourseCreation from "./pages/CourseCreation";
 import EditCoursePage from "./pages/EditCoursePage";
+import EditChapterPage from "./pages/EditChapterPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import TeacherRoute from "./components/TeacherRoute";
@@ -39,6 +40,7 @@ const App = () => {
                         <Route path="/teacher-home" element={<TeacherHome />} />
                         <Route path="/create-course" element={<CourseCreation />} />
                         <Route path="/edit-course/:id" element={<EditCoursePage />} />
+                        <Route path="/courses/:course_id/editchapters" element={<EditChapterPage />} />
                     </Route>
                 )}
 
