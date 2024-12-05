@@ -181,7 +181,28 @@ const LearningPage = () => {
                             <Text mb={4} dangerouslySetInnerHTML={{ __html: chapters[currentChapterIndex]?.chapter_description }} />
                         )}
                         {chapters[currentChapterIndex]?.type === "text" ? (
-                            <Box dangerouslySetInnerHTML={{ __html: chapters[currentChapterIndex]?.chapter_content }} />
+                            <Box dangerouslySetInnerHTML={{ __html: chapters[currentChapterIndex]?.chapter_content }}
+                                sx={{
+                                    '& h1': { fontSize: '2xl', fontWeight: 'bold', marginBottom: '1rem' },
+                                    '& h2': { fontSize: 'xl', fontWeight: 'semibold', marginBottom: '0.75rem' },
+                                    '& h3': { fontSize: 'lg', fontWeight: 'medium', marginBottom: '0.5rem' },
+                                    '& p': { marginBottom: '1rem', fontSize: 'md' },
+                                    '& strong': { fontWeight: 'bold' },
+                                    '& em': { fontStyle: 'italic' },
+                                    '& u': { textDecoration: 'underline' },
+                                    '& ul': { paddingLeft: '1.5rem', marginBottom: '1rem', listStyleType: 'disc' },
+                                    '& ul li': { marginBottom: '0.5rem' },
+                                    '& ol': { paddingLeft: '1.5rem', marginBottom: '1rem', listStyleType: 'decimal' },
+                                    '& ol li': { marginBottom: '0.5rem' },
+                                    '& blockquote': {
+                                        paddingLeft: '1rem',
+                                        borderLeft: '4px solid',
+                                        borderColor: 'gray.300',
+                                        fontStyle: 'italic',
+                                        marginBottom: '1rem',
+                                    },
+                                    '& a': { color: 'blue.500', textDecoration: 'underline' },
+                                }} />
                         ) : (
                             <Box>
                                 <iframe
