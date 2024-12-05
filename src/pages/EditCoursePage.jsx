@@ -279,7 +279,7 @@ const EditCoursePage = () => {
                     <IconButton
                         icon={<ArrowBackIcon />}
                         variant="ghost"
-                        onClick={() => navigate("/teacher-home")}
+                        onClick={() => navigate(-1)}
                         _hover={{ bg: "brand.menuHover" }}
                         aria-label="Go back"
                     />

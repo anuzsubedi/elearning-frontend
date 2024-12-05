@@ -6,6 +6,7 @@ import Banner from "../components/Banner";
 import StudentCourseCard from "../components/StudentCourseCard"; // Import the StudentCourseCard component
 import { getAllCourses } from "../services/courseServices"; // Import the getAllCourses service
 import bookImage from "../assets/book.png";
+import YourCourses from "../components/YourCourses";
 
 const StudentHome = () => {
     const [courses, setCourses] = useState([]);
@@ -41,6 +42,7 @@ const StudentHome = () => {
                 description="Explore courses, view assignments, and much more!"
                 image={bookImage}
             />
+            <YourCourses />
             <Center py={10} px={6}>
                 {loading ? (
                     <Text>Loading...</Text>

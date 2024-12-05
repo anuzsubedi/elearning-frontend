@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Box, Image, Heading, Text, IconButton, Skeleton } from "@chakra-ui/react";
+import { Box, Image, Heading, Text, Progress, Skeleton } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { getImage } from "../services/imageService";
-import { ViewIcon } from "@chakra-ui/icons";
 
-const StudentCourseCard = ({ course }) => {
+const EnrolledCourseCard = ({ course }) => {
     const navigate = useNavigate();
     const [imageUrl, setImageUrl] = useState(null);
     const [imageLoading, setImageLoading] = useState(true);
@@ -12,7 +11,6 @@ const StudentCourseCard = ({ course }) => {
 
     useEffect(() => {
         const fetchImage = async () => {
-            // Only fetch image if image_id exists
             if (course.image_id) {
                 try {
                     const result = await getImage(course.image_id);
@@ -33,7 +31,6 @@ const StudentCourseCard = ({ course }) => {
 
         fetchImage();
 
-        // Clean up the URL object to prevent memory leaks
         return () => {
             if (imageUrl) {
                 URL.revokeObjectURL(imageUrl);
@@ -42,6 +39,7 @@ const StudentCourseCard = ({ course }) => {
     }, [course.image_id]);
 
     const handleView = () => {
+        // Navigate to course details page
         navigate(`/course/${course.course_id}`);
     };
 
@@ -54,6 +52,8 @@ const StudentCourseCard = ({ course }) => {
             transition="transform 0.2s"
             _hover={{ transform: "scale(1.005)" }}
             position="relative"
+            onClick={handleView}
+            cursor="pointer"
         >
             {imageLoading ? (
                 <Skeleton height="150px" width="100%" />
@@ -84,23 +84,16 @@ const StudentCourseCard = ({ course }) => {
                 <Text color="gray.500" fontSize="sm" mb={2}>
                     Instructor: {course.instructor_name}
                 </Text>
-                <Text color="gray.500" fontSize="sm" mb={4}>
-                    Price: ${course.course_price}
+                <Text color="gray.500" fontSize="sm" mb={2}>
+                    Enrolled on: {new Date(course.created_at).toLocaleDateString()}
                 </Text>
+                <Text color="gray.500" fontSize="sm" mb={4}>
+                    Progress: 10% completed
+                </Text>
+                <Progress value={10} size="sm" colorScheme="green" />
             </Box>
-
-            <IconButton
-                icon={<ViewIcon />}
-                colorScheme="blue"
-                size="sm"
-                position="absolute"
-                top="10px"
-                right="10px"
-                onClick={handleView}
-                aria-label="View Course"
-            />
         </Box>
     );
 };
 
-export default StudentCourseCard;
+export default EnrolledCourseCard;
