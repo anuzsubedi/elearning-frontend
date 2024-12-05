@@ -80,3 +80,18 @@ export const editCourse = async (courseId, courseData) => {
         };
     }
 };
+
+export const deleteCourse = async (courseId) => {
+    try {
+        await axiosInstance.delete(`/courses/${courseId}`);
+        return {
+            success: true,
+            message: "Course deleted successfully!"
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to delete course."
+        };
+    }
+};
