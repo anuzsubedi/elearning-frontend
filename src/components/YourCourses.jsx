@@ -34,7 +34,7 @@ const YourCourses = () => {
     }
 
     if (error) {
-        return <Text>Error: {error}</Text>;
+        return <></>;
     }
 
     return (
