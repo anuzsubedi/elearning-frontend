@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ChakraProvider, Box, Text, Flex, Button, Grid, GridItem, Icon } from "@chakra-ui/react";
+import { Box, Text, Flex, Button, Grid, GridItem, Icon } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
 import Header from "../components/Header";
 import { getCourseById } from "../services/courseServices";
 import { useAuth } from "../context/AuthContext";
 import theme from "../theme/theme";
 import CourseBanner from "../components/CourseBanner";
+import Footer from "../components/Footer";
 
 const CoursePage = () => {
     const { courseId } = useParams();
@@ -47,7 +48,7 @@ const CoursePage = () => {
     }
 
     return (
-        <ChakraProvider theme={theme}>
+        <Box>
             <Header />
             <CourseBanner courseData={course} user={user} />
             <Box mx="auto" maxW="80%" mb={4}>
@@ -65,7 +66,9 @@ const CoursePage = () => {
                     ))}
                 </Grid>
             </Box>
-        </ChakraProvider>
+            <Box h={20} />
+            <Footer />
+        </Box>
     );
 };
 
