@@ -7,6 +7,7 @@ import CourseCard from "../components/CourseCard";
 import { getInstructorCourses } from "../services/courseServices";
 import bookImage from "../assets/book.png";
 import TeacherCourses from "../components/TeacherCourses";
+import Footer from "../components/Footer";
 
 const TeacherHome = () => {
     const [courses, setCourses] = useState([]);
@@ -54,6 +55,8 @@ const TeacherHome = () => {
                 image={bookImage}
             />
             <TeacherCourses />
+            <Box h={20} />
+            <Footer />
         </Box>
     );
 };
