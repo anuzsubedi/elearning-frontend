@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text, Flex, Button, Image, useToast } from "@chakra-ui/react";
 import ShapeImage from "../assets/Shape.png";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { enrollUser } from "../services/enrollmentServices";
+import { enrollUser, getEnrollmentsByUser } from "../services/enrollmentServices";
 
 const CourseBanner = ({ courseData }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const toast = useToast();
+    const [isEnrolled, setIsEnrolled] = useState(false);
+
+    useEffect(() => {
+        const checkEnrollment = async () => {
+            if (user) {
+                const { success, enrollments } = await getEnrollmentsByUser();
+                if (success) {
+                    const enrolled = enrollments.some(enrollment => enrollment.course_id === courseData.course_id);
+                    setIsEnrolled(enrolled);
+                }
+            }
+        };
+
+        checkEnrollment();
+    }, [user, courseData.course_id]);
 
     const handleCallback = async () => {
         if (!user) {
@@ -19,6 +34,11 @@ const CourseBanner = ({ courseData }) => {
                 duration: 5000,
                 isClosable: true,
             });
+            return;
+        }
+
+        if (isEnrolled) {
+            navigate(`/course/${courseData.course_id}/learning`);
             return;
         }
 
@@ -92,7 +112,7 @@ const CourseBanner = ({ courseData }) => {
                         px={12}
                         onClick={handleCallback}
                     >
-                        {user?.user_type === "Instructor" ? "Manage Course" : "Enroll Now"}
+                        {isEnrolled ? "Go to Course" : user?.user_type === "Instructor" ? "Manage Course" : "Enroll Now"}
                     </Button>
                 </Box>
                 <Box flex="0 0 30%">

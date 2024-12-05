@@ -9,6 +9,7 @@ import {
     VStack,
     Text,
     Link,
+    Checkbox,
 } from "@chakra-ui/react";
 import { login } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
@@ -17,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [error, setError] = useState(null);
+    const [stayLoggedIn, setStayLoggedIn] = useState(false);
     const { loginUser } = useAuth();
     const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ const Login = () => {
         try {
             const result = await login(credentials);
             if (result.success) {
-                loginUser(result.user); // Save user to context
+                loginUser(result.user, stayLoggedIn); // Save user to context with stayLoggedIn
                 navigate(result.user.user_type === "Instructor" ? "/teacher-home" : "/");
             } else {
                 setError(result.message);
@@ -75,6 +77,14 @@ const Login = () => {
                                 value={credentials.password}
                                 onChange={handleInputChange}
                             />
+                        </FormControl>
+                        <FormControl>
+                            <Checkbox
+                                isChecked={stayLoggedIn}
+                                onChange={(e) => setStayLoggedIn(e.target.checked)}
+                            >
+                                Stay logged in
+                            </Checkbox>
                         </FormControl>
                         {error && <Text color="red.500">{error}</Text>}
                         <Button type="submit" w="100%">

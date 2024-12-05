@@ -29,6 +29,7 @@ import { createCourse } from "../services/courseServices";
 import { uploadImage } from "../services/imageService";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { s } from "framer-motion/client";
 
 const MotionBox = motion(Box);
 
@@ -220,6 +221,7 @@ const CourseCreationForm = () => {
 
             const result = await createCourse(courseData);
 
+
             if (result.success) {
                 toast({
                     title: "Success!",
@@ -228,7 +230,7 @@ const CourseCreationForm = () => {
                     duration: 3000,
                 });
                 console.log(result.course_id);
-                navigate(`/courses/${result.course_id}/chapters`);
+                navigate(`/course/${result.course_id}/editchapters`);
             } else {
                 throw new Error(result.message || "Failed to create course");
             }

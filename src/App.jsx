@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import TeacherRoute from "./components/TeacherRoute";
 import NotFound from "./pages/NotFound";
 import CoursePage from "./pages/CoursePage";
+import LearningPage from "./pages/LearningPage";
 
 const App = () => {
     const { user } = useAuth(); // Get the current user from AuthContext
@@ -48,7 +49,7 @@ const App = () => {
                 )}
 
                 <Route path="/course/:courseId" element={<CoursePage />} />
-
+                <Route path="/course/:course_id/learning" element={<LearningPage />} />
                 {/* Catch-all for unknown routes */}
                 <Route path="*" element={<NotFound />} />
             </Routes>

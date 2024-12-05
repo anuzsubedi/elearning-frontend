@@ -1,13 +1,19 @@
 import axiosInstance from "./axiosInstance";
 
+
 export const createCourse = async (data) => {
     try {
         const response = await axiosInstance.post("/courses/create", data);
-        return { success: true, message: "Course created successfully!" };
+        return { success: true, course_id: response.data.course_id, message: "Course created successfully!" };
     } catch (error) {
-        return { success: false, message: error.response?.data?.message || "Course creation failed." };
+        return {
+            success: false,
+            message: error.response?.data?.message || "Failed to create course.",
+        };
     }
 };
+
+// Other service functions...
 
 export const getInstructorCourses = async () => {
     try {

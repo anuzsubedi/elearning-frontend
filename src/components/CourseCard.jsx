@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Box, Image, Heading, Text, IconButton, Skeleton } from "@chakra-ui/react";
+import { Box, Image, Heading, Text, IconButton, Skeleton, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverHeader, PopoverBody, Button, HStack } from "@chakra-ui/react";
+import { EditIcon, DeleteIcon, ViewIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { getImage } from "../services/imageService"; // Import the image service
-import { EditIcon } from "@chakra-ui/icons"; // Import the Edit icon
+
 
 const CourseCard = ({ course }) => {
     const navigate = useNavigate();
@@ -45,6 +46,14 @@ const CourseCard = ({ course }) => {
         navigate(`/edit-course/${course.course_id}`);
     };
 
+    const handleDelete = () => {
+        // Handle delete logic
+    }
+
+    const handleListChapters = () => {
+        navigate(`/course/${course.course_id}/editchapters`);
+    }
+
     return (
         <Box
             bg="white"
@@ -86,16 +95,58 @@ const CourseCard = ({ course }) => {
                 </Text>
             </Box>
 
-            <IconButton
-                icon={<EditIcon />}
-                colorScheme="blue"
-                size="sm"
-                position="absolute"
-                top="10px"
-                right="10px"
-                onClick={handleEdit}
-                aria-label="Edit Course"
-            />
+            <Popover trigger="hover">
+                <PopoverTrigger>
+                    <IconButton
+                        icon={<EditIcon />}
+                        colorScheme="brand.primary"
+                        size="sm"
+                        position="absolute"
+                        top="10px"
+                        right="10px"
+                        aria-label="Edit Course"
+                    />
+                </PopoverTrigger>
+                <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>Actions</PopoverHeader>
+                    <PopoverBody>
+                        <HStack spacing={4}>
+                            <Button
+                                leftIcon={<EditIcon />}
+                                bg="brand.primary"
+                                color="white"
+                                size="sm"
+                                onClick={handleEdit}
+                                _hover={{ bg: "brand.secondary" }}
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                leftIcon={<DeleteIcon />}
+                                bg="brand.error"
+                                color="white"
+                                size="sm"
+                                onClick={handleDelete}
+                                _hover={{ bg: "red.600" }}
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                leftIcon={<ViewIcon />}
+                                bg="brand.primary"
+                                color="white"
+                                size="sm"
+                                onClick={handleListChapters}
+                                _hover={{ bg: "brand.secondary" }}
+                            >
+                                Chapters
+                            </Button>
+                        </HStack>
+                    </PopoverBody>
+                </PopoverContent>
+            </Popover>
         </Box>
     );
 };
