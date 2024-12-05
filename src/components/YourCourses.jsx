@@ -38,9 +38,9 @@ const YourCourses = () => {
     }
 
     return (
-        <Box mx="auto" maxW="80%" mt={8}>
-            <Heading as="h1" size="xl" mb={6} fontFamily="Georgia, serif">
-                Your Courses
+        <Box mx="auto" maxW="80%" mt={10}>
+            <Heading as="h2" size="xl" mb={6} fontFamily="Georgia, serif">
+                Let's continue learning!
             </Heading>
             <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={6}>
                 {courses.length > 0 ? (
