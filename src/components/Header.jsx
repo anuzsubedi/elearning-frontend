@@ -97,7 +97,12 @@ const Header = () => {
             color="black"
             alignItems="center"
         >
-            <Text fontSize="3xl" fontWeight="bold">
+            <Text
+                fontSize="3xl"
+                fontWeight="bold"
+                as="button"
+                onClick={() => navigate("/")}
+            >
                 <Text as="span" color="brand.primary">
                     Next
                 </Text>

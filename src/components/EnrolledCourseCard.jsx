@@ -90,7 +90,7 @@ const EnrolledCourseCard = ({ course }) => {
                 <Text color="gray.500" fontSize="sm" mb={4}>
                     Progress: 10% completed
                 </Text>
-                <Progress value={10} size="sm" colorScheme="green" />
+                <Progress value={10} size="sm" colorScheme="red" />
             </Box>
         </Box>
     );
