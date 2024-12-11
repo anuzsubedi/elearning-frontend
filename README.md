@@ -69,15 +69,3 @@ Thank you for using the eLearning Frontend! Happy learning!
 ## Backend
 
 The backend for this project can be found at [github.com/anuzsubedi/elearning-api](https://github.com/anuzsubedi/elearning-api). Make sure to follow the instructions in the backend repository to set it up.
-
-## Environment Variables
-
-To run the eLearning Frontend, you need to create a `.env` file in the root directory of the project with the necessary environment variables. Here is an example of what your `.env` file might look like:
-
-```
-REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_GOOGLE_CLIENT_ID=your-google-client-id
-REACT_APP_FACEBOOK_APP_ID=your-facebook-app-id
-```
-
-Replace the placeholder values with your actual configuration.
